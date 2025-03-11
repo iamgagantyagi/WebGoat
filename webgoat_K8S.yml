@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webgoat-deployment
+  labels:
+    app: webgoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webgoat
+  template:
+    metadata:
+      labels:
+        app: webgoat
+    spec:
+      containers:
+      - name: webgoat
+        image: webgoat/webgoat-8.0:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: JAVA_OPTS
+          value: "-Xmx512m -Xms256m"  # Optional: Adjust Java options for WebGoat
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webgoat-service
+spec:
+  selector:
+    app: webgoat
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer  
